@@ -1,0 +1,399 @@
+{% extends 'template.html' %}
+{% block content %}
+<!-- Page Title -->
+<div class="page-title" data-aos="fade">
+  <div class="heading">
+    <div class="container">
+      <div class="row d-flex justify-content-center text-center">
+        <div class="col-lg-8">
+          <h1>Listas de los proyectos</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Buscar y Ordenar Proyectos -->
+<section id="search" class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            Buscar Proyectos
+          </div>
+          <div class="card-body">
+            <form action="/proyecto/buscar" method="POST" id="searchForm" onsubmit="return validateSearch()">
+              <div class="form-group mb-2">
+                <label>Ingrese el texto a buscar:</label>
+                <input type="text" name="criterio" id="searchCriterio" class="form-control" required>
+                <div id="searchError" class="text-danger" style="display: none;"></div>
+              </div>
+              <div class="form-group mb-2">
+                <label>Escoja el Criterio de Búsqueda:</label>
+                <select name="atributo" id="searchAttribute" class="form-control" required>
+                  <option value="nombre">Nombre</option>
+                  <option value="acronimo">Acrónimo</option>
+                  <option value="inversion">Inversión</option>
+                </select>
+              </div>
+              <div class="form-group mb-2">
+                <label>Elija el Método de Búsqueda:</label>
+                <select name="metodoBusqueda" class="form-control" required>
+                  <option value="binario">Búsqueda Binaria</option>
+                  <option value="lineal">Búsqueda Lineal</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> Buscar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            Ordenar Proyectos
+          </div>
+          <div class="card-body">
+            <form action="/proyecto/ordenar" method="POST">
+              <div class="form-group mb-2">
+                <label>Ordenar por:</label>
+                <select name="atributo" class="form-control" required>
+                  <option value="nombre">Nombre</option>
+                  <option value="acronimo">Acrónimo</option>
+                  <option value="inversion">Inversión</option>
+                </select>
+              </div>
+              <div class="form-group mb-2">
+                <label>Escoja el Metodo de Ordenamiento</label>
+                <select name="algoritmo" class="form-control" required>
+                  <option value="quicksort">QuickSort</option>
+                  <option value="mergesort">MergeSort</option>
+                  <option value="shellsort">ShellSort</option>
+                </select>
+              </div>
+              <div class="form-group mb-2">
+                <label>Elija el Sentido de Ordenamiento</label>
+                <select name="ascendente" class="form-control" required>
+                  <option value="true">Ascendente</option>
+                  <option value="false">Descendente</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-arrow-down-up"></i> Ordenar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Existing Courses Section with Projects Table -->
+<section id="courses" class="courses section">
+  <div class="container">
+    <div class="custom-table-container">
+      {% if lista %}
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th><i class="bi bi-hashtag"></i> N°</th>
+            <th><i class="bi bi-clipboard-data"></i> Nombre Proyecto</th>
+            <th><i class="bi bi-currency-dollar"></i> Monto Inversión</th>
+            <th><i class="bi bi-clock"></i> Tiempo de vida (años)</th>
+            <th><i class="bi bi-calendar-check"></i> Fecha Inicio</th>
+            <th><i class="bi bi-calendar-x"></i> Fecha Fin</th>
+            <th><i class="bi bi-lightning"></i> Generación Energética diaria (MW)</th>
+            <th><i class="bi bi-tags"></i> Acrónimo</th>
+            <th><i class="bi bi-cash"></i> Costo Total</th>
+            <th><i class="bi bi-gear"></i> Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in lista %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{item.nombre}}</td>
+            <td>${{item.inversion}}</td>
+            <td>{{item.tiempodevida}}</td>
+            <td>{{item.fechaInicio}}</td>
+            <td>{{item.fechaFin}}</td>
+            <td>{{item.electicidadGeneradapordia}} MW</td>
+            <td>{{item.acronimo}}</td>
+            <td>${{item.costototal}}</td>
+            <td>
+              <div class="btn-group-custom">
+                <button type="button" class="btn-custom btn-danger-custom">
+                  <i class="bi bi-trash"></i>
+                </button>
+                <a class="btn-custom btn-primary-custom" href="/proyecto/editar/{{item.idProyecto}}">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <a class="btn-custom btn-success-custom" href="/inversionista/listas/{{item.acronimo}}">
+                  <i class="bi bi-person-plus"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="no-results-container text-center py-5">
+        <i class="bi bi-search-heart display-1 text-muted mb-3" style="font-size: 5rem;"></i>
+        <h2 class="mb-3">Oh, no se encontró ninguna coincidencia</h2>
+        <p class="text-muted">Por favor ajuste su búsqueda o filtros</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- JavaScript for Form Validation -->
+<script>
+  function validateSearch() {
+    const searchCriterio = document.getElementById('searchCriterio');
+    const searchAttribute = document.getElementById('searchAttribute');
+    const searchError = document.getElementById('searchError');
+
+    // Reset previous error
+    searchError.style.display = 'none';
+    searchError.textContent = '';
+
+    // Validation based on selected attribute
+    if (searchAttribute.value === 'nombre' || searchAttribute.value === 'acronimo') {
+      // For name or acronym, check that input does not contain numbers
+      if (/\d/.test(searchCriterio.value)) {
+        searchError.textContent = 'Por favor, ingrese texto válido (sin números).';
+        searchError.style.display = 'block';
+        return false;
+      }
+    } else if (searchAttribute.value === 'inversion') {
+      // For investment, check that input contains only numbers
+      if (!/^\d+(\.\d+)?$/.test(searchCriterio.value)) {
+        searchError.textContent = 'Por favor, ingrese un número válido.';
+        searchError.style.display = 'block';
+        return false;
+      }
+    }
+
+    return true;
+  }
+</script>
+
+<style>
+
+  .custom-table-container {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 240, 240, 0.9));
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+  }
+
+  .custom-table {
+    width: 100%;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
+
+  .custom-table thead {
+    background: linear-gradient(45deg, #ff0000, #ff4444);
+    color: white;
+  }
+
+  .custom-table th {
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    border: none;
+  }
+
+  .custom-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.9rem;
+    vertical-align: middle;
+  }
+
+  .custom-table tbody tr {
+    transition: all 0.3s ease;
+  }
+
+  .custom-table tbody tr:hover {
+    background-color: rgb(248, 224, 224);
+  }
+
+  .custom-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .btn-group-custom {
+    display: flex;
+    gap: 5px;
+  }
+
+  .btn-custom {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    border: none;
+  }
+
+  .btn-danger-custom {
+    background: linear-gradient(45deg, #ff0000, #ff4444);
+    color: white;
+  }
+
+  .btn-primary-custom {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+  }
+
+  .btn-success-custom {
+    background: linear-gradient(45deg, #28a745, #218838);
+    color: white;
+  }
+
+  .btn-custom:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    color: white;
+  }
+
+  /* Responsive styles */
+  @media (max-width: 992px) {
+    .custom-table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  }
+</style>
+
+<style>
+  /* Estilo para los recuadros de búsqueda y ordenación */
+  .card {
+    background: rgba(235, 230, 230, 0.1);
+    /* Fondo rojo translúcido */
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+    padding: 15px;
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.7), rgba(255, 99, 71, 0.7));
+    /* Degradado en tonos rojizos */
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .card-body {
+    background: rgba(255, 255, 255, 0.5);
+    /* Fondo blanco con opacidad para dar efecto de transparencia */
+    border-radius: 0 0 10px 10px;
+    padding: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #cc0000;
+    /* Color rojo oscuro para las etiquetas */
+  }
+
+  .form-control {
+    background-color: rgba(255, 255, 255, 0.7);
+    /* Fondo blanco semitransparente */
+    border: 1px solid rgba(255, 0, 0, 0.4);
+    /* Borde rojizo suave */
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #ff0000;
+    /* Borde más intenso al hacer foco */
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  }
+
+  button[type="submit"] {
+    background: linear-gradient(45deg, #ff0000, #ff4444);
+    /* Degradado de rojo */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  button[type="submit"]:hover {
+    background: linear-gradient(45deg, #ff4444, #ff0000);
+    /* Cambio de tono al pasar el mouse */
+    transform: translateY(-2px);
+  }
+
+  /* Estilos para los recuadros en dispositivos pequeños */
+  @media (max-width: 768px) {
+    .card {
+      margin-bottom: 15px;
+    }
+
+    .card-header {
+      font-size: 1rem;
+      padding: 8px;
+    }
+
+    .form-control {
+      padding: 8px;
+    }
+
+    button[type="submit"] {
+      font-size: 0.9rem;
+      padding: 10px 18px;
+    }
+  }
+</style>
+
+<style>
+  .no-results-container {
+    background-color: rgb(250, 221, 221);
+    border-radius: 10px;
+    padding: 3rem;
+    margin-top: 2rem;
+  }
+
+  .no-results-container .bi-search-heart {
+    color: #787d6c;
+    margin-bottom: 1rem;
+    display: block;
+  }
+</style>
+
+{% endblock %}

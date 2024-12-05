@@ -1,0 +1,152 @@
+{% extends 'templateinversion.html' %}
+{% block content %}
+
+<style>
+    .page-title {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 240, 0.95));
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;   
+        margin: 30px auto;
+        max-width: 700px; 
+    }
+
+    .page-title h1 {
+        color: #ff0000;
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .form-container {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 240, 0.95));
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        margin: 30px auto;
+        max-width: 700px;
+    }
+
+    .form-title {
+        color: #ff0000;
+        font-size: 2rem;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(255, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+        width: 100%;
+    }
+
+    .form-control:focus {
+        border-color: #ff0000;
+        box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.1);
+    }
+
+    .submit-btn {
+        background: linear-gradient(45deg, #ff0000, #ff4444);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+    }
+
+    .input-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+    }
+
+    .form-control:focus+.input-icon {
+        color: #ff0000;
+    }
+</style>
+
+<div class="page-title">
+    <h1>Registro de Inversionistas</h1>
+    <nav class="breadcrumbs"></nav>
+</div><!-- End Page Title -->
+
+<div class="container mt-5">
+    <div class="form-container">
+        <form method="post" action="/inversionista/asociar/{{proyecto.acronimo}}">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nombre" class="form-label">Nombre:</label>
+                        <input type="text" name="nombre" required class="form-control" id="nombre"
+                            placeholder="Ingrese el nombre">
+                            <i class="bi bi-person input-icon"></i>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="apellido" class="form-label">Apellido:</label>
+                        <input type="text" name="apellido" required class="form-control" id="apellido"
+                            placeholder="Ingrese el apellido">
+                            <i class="bi bi-person-fill input-icon"></i>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="dni" class="form-label">DNI:</label>
+                        <input type="text" name="dni" required class="form-control" id="dni"
+                            placeholder="Ingrese el DNI">
+                            <i class="bi bi-credit-card input-icon"></i>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="telefono" class="form-label">Teléfono:</label>
+                        <input type="text" name="telefono" required class="form-control" id="telefono"
+                            placeholder="Ingrese el teléfono">
+                            <i class="bi bi-telephone input-icon"></i>
+                    </div>
+                </div>
+                <input type="hidden" name="id" value="{{proyecto.acronimo}}">
+                <div class="col-12">
+                    <button type="submit" class="submit-btn">
+                        <i class="bi bi-save me-2"></i> Guardar Inversionista
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
